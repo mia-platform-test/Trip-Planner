@@ -1,0 +1,10 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: default-ingress
+  labels:
+    app.kubernetes.io/instance: "ingress-controller"
+spec:
+  entryPoints:
+    - websecure
+  routes:

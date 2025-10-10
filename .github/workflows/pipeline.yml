@@ -1,0 +1,61 @@
+name: Deploy Workflow
+on: deployment
+
+jobs:
+  deploy-ENVIRONMENT_NAME:
+    name: Deploy to ENVIRONMENT_NAME environment
+    if: ${{ github.event.deployment.environment }} == ENVIRONMENT_NAME
+    concurrency: ENVIRONMENT_NAME
+    permissions:
+      deployments: write
+      contents: read
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set KUBECONFIG
+        run: echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+
+      - name: Verifica accesso cluster
+        run: |
+          kubectl config current-context
+          kubectl get nodes
+          kubectl config current-context
+          kubectl get ns
+          kubectl auth can-i create deployment -n em-test-dev
+
+  
+      - name: Debug access
+        run: |
+          kubectl config current-context
+          kubectl cluster-info
+          kubectl get nodes
+  
+      - name: Deploy YAMLs
+        env:
+          KUBE_NAMESPACE: ${{ github.event.deployment.payload.variables.KUBE_NAMESPACE }}
+          DEPLOY_FOLDER: environments/${{ github.event.deployment.environment }}
+        run: |
+              echo "Deploying manifests in namespace $KUBE_NAMESPACE..."
+
+              echo "===== FILES TO APPLY ====="
+              find $DEPLOY_FOLDER -type f \( -name "*.yml" -o -name "*.yaml" \) ! -name "kustomization.yaml"
+              echo "=========================="
+          
+              find $DEPLOY_FOLDER -type f \( -name "*.yml" -o -name "*.yaml" \) ! -name "kustomization.yaml" \
+                -exec kubectl apply -f {} -n $KUBE_NAMESPACE \;
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: '${{ github.token }}'
+          state: 'success'
+          deployment-id: ${{ github.event.deployment.id }}
+  
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: '${{ github.token }}'
+          state: 'failure'
+          deployment-id: ${{ github.event.deployment.id }}
