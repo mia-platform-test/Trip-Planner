@@ -61,7 +61,8 @@ spec:
           volumeMounts: []
           ports:
             - name: http
-              containerPort: 3000
+              containerPort: 80
+              protocol: TCP
           args: []
           env:
             - name: HTTP_PORT
