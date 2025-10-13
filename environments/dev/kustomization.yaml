@@ -4,4 +4,7 @@ resources:
   - ../../configuration
   - frontend-application-demo.deployment.yml
   - frontend-application-demo.service.yml
+  - fleet-management.deployment.yml
+  - fleet-management.service.yml
   - frontend-application-demo.serviceaccount.yml
+  - fleet-management.serviceaccount.yml
