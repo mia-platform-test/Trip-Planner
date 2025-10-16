@@ -8,8 +8,11 @@ resources:
   - ship-tracking-service-frontend.service.yml
   - postgresql-database.deployment.yml
   - postgresql-database.service.yml
+  - fe.deployment.yml
+  - fe.service.yml
   - frontend-application-demo.serviceaccount.yml
   - fleet-management.serviceaccount.yml
   - ship-tracking-backend.serviceaccount.yml
   - ship-tracking-service-frontend.serviceaccount.yml
   - postgresql-database.serviceaccount.yml
+  - fe.serviceaccount.yml

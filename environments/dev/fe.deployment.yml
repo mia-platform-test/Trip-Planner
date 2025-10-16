@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fe
+  annotations:
+    mia-platform.eu/version: 14.1.0-alpha.0
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+    fluentbit.io/parser: pino
+  labels:
+    app: fe
+    app.kubernetes.io/name: fe
+    app.kubernetes.io/version: latest
+    app.kubernetes.io/component: custom
+    app.kubernetes.io/part-of: trip-planner
+    app.kubernetes.io/managed-by: mia-platform
+    mia-platform.eu/stage: dev
+    mia-platform.eu/tenant: c1d106ff-4716-49a1-88e2-940b21705986
+    mia-platform.eu/log-type: mia-json
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fe
+  strategy:
+    type: RollingUpdate
+  revisionHistoryLimit: 1
+  template:
+    metadata:
+      annotations:
+        mia-platform.eu/version: 14.1.0-alpha.0
+        apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+        apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+        fluentbit.io/parser: pino
+      labels:
+        app: fe
+        app.kubernetes.io/name: fe
+        app.kubernetes.io/version: latest
+        app.kubernetes.io/component: custom
+        app.kubernetes.io/part-of: trip-planner
+        app.kubernetes.io/managed-by: mia-platform
+        mia-platform.eu/stage: dev
+        mia-platform.eu/tenant: c1d106ff-4716-49a1-88e2-940b21705986
+        mia-platform.eu/log-type: mia-json
+    spec:
+      imagePullSecrets:
+        - name: nexus-gcloud
+      terminationGracePeriodSeconds: 30
+      serviceAccountName: fe
+      containers:
+        - name: fe
+          image: harbor.local/mia-platform-test/ship-tracker:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 150Mi
+              cpu: 100m
+            requests:
+              memory: 150Mi
+              cpu: 100m
+          volumeMounts: []
+          ports:
+            - name: http
+              containerPort: 3000
+          args: []
+          env:
+            - name: HTTP_PORT
+              value: '3000'
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+      volumes: []
+      hostIPC: false
+      hostNetwork: false
+      hostPID: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
