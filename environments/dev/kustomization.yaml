@@ -2,9 +2,14 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../configuration
-  - frontend-application-demo.deployment.yml
-  - frontend-application-demo.service.yml
-  - fleet-management.deployment.yml
-  - fleet-management.service.yml
+  - ship-tracking-backend.deployment.yml
+  - ship-tracking-backend.service.yml
+  - ship-tracking-service-frontend.deployment.yml
+  - ship-tracking-service-frontend.service.yml
+  - postgresql-database.deployment.yml
+  - postgresql-database.service.yml
   - frontend-application-demo.serviceaccount.yml
   - fleet-management.serviceaccount.yml
+  - ship-tracking-backend.serviceaccount.yml
+  - ship-tracking-service-frontend.serviceaccount.yml
+  - postgresql-database.serviceaccount.yml

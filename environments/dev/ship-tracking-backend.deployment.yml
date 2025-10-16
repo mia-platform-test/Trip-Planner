@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-application-demo
+  name: ship-tracking-backend
   annotations:
     mia-platform.eu/version: 14.1.0-alpha.0
     apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
     apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
     fluentbit.io/parser: pino
-    domain: helloworld
+    domain: ship-tracking-backend
   labels:
-    app: frontend-application-demo
-    app.kubernetes.io/name: frontend-application-demo
+    app: ship-tracking-backend
+    app.kubernetes.io/name: ship-tracking-backend
     app.kubernetes.io/version: latest
     app.kubernetes.io/component: custom
     app.kubernetes.io/part-of: trip-planner
@@ -18,12 +18,11 @@ metadata:
     mia-platform.eu/stage: dev
     mia-platform.eu/tenant: c1d106ff-4716-49a1-88e2-940b21705986
     mia-platform.eu/log-type: mia-json
-    technologies: html
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend-application-demo
+      app: ship-tracking-backend
   strategy:
     type: RollingUpdate
   revisionHistoryLimit: 1
@@ -34,10 +33,10 @@ spec:
         apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
         apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
         fluentbit.io/parser: pino
-        domain: helloworld
+        domain: ship-tracking-backend
       labels:
-        app: frontend-application-demo
-        app.kubernetes.io/name: frontend-application-demo
+        app: ship-tracking-backend
+        app.kubernetes.io/name: ship-tracking-backend
         app.kubernetes.io/version: latest
         app.kubernetes.io/component: custom
         app.kubernetes.io/part-of: trip-planner
@@ -45,15 +44,14 @@ spec:
         mia-platform.eu/stage: dev
         mia-platform.eu/tenant: c1d106ff-4716-49a1-88e2-940b21705986
         mia-platform.eu/log-type: mia-json
-        technologies: html
     spec:
       imagePullSecrets:
         - name: nexus-gcloud
       terminationGracePeriodSeconds: 30
-      serviceAccountName: frontend-application-demo
+      serviceAccountName: ship-tracking-backend
       containers:
-        - name: frontend-application-demo
-          image: harbor.local/mia-platform-test/helloworld-service
+        - name: ship-tracking-backend
+          image: harbor.local/mia-platform-test/ship-tracking-backend:latest
           imagePullPolicy: Always
           resources:
             limits:
@@ -65,7 +63,7 @@ spec:
           volumeMounts: []
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 4000
               protocol: TCP
           args: []
           env:

@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fleet-management
+  name: postgresql-database
   annotations:
     mia-platform.eu/version: 14.1.0-alpha.0
     apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
     apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
     fluentbit.io/parser: pino
   labels:
-    app: fleet-management
-    app.kubernetes.io/name: fleet-management
+    app: postgresql-database
+    app.kubernetes.io/name: postgresql-database
     app.kubernetes.io/version: latest
     app.kubernetes.io/component: custom
     app.kubernetes.io/part-of: trip-planner
@@ -21,7 +21,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fleet-management
+      app: postgresql-database
   strategy:
     type: RollingUpdate
   revisionHistoryLimit: 1
@@ -33,8 +33,8 @@ spec:
         apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
         fluentbit.io/parser: pino
       labels:
-        app: fleet-management
-        app.kubernetes.io/name: fleet-management
+        app: postgresql-database
+        app.kubernetes.io/name: postgresql-database
         app.kubernetes.io/version: latest
         app.kubernetes.io/component: custom
         app.kubernetes.io/part-of: trip-planner
@@ -46,10 +46,10 @@ spec:
       imagePullSecrets:
         - name: nexus-gcloud
       terminationGracePeriodSeconds: 30
-      serviceAccountName: fleet-management
+      serviceAccountName: postgresql-database
       containers:
-        - name: fleet-management
-          image: harbor.local/mia-platform-test/ship-tracker:latest
+        - name: postgresql-database
+          image: mia-platform-test/postgres
           imagePullPolicy: Always
           resources:
             limits:
@@ -61,12 +61,27 @@ spec:
           volumeMounts: []
           ports:
             - name: http
-              containerPort: 80
-              protocol: TCP
+              containerPort: 3000
           args: []
           env:
+            - name: LOG_LEVEL
+              value: '{{LOG_LEVEL}}'
+            - name: MICROSERVICE_GATEWAY_SERVICE_NAME
+              value: microservice-gateway
+            - name: TRUSTED_PROXIES
+              value: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
             - name: HTTP_PORT
               value: '3000'
+            - name: USERID_HEADER_KEY
+              value: miauserid
+            - name: GROUPS_HEADER_KEY
+              value: miausergroups
+            - name: CLIENTTYPE_HEADER_KEY
+              value: client-type
+            - name: BACKOFFICE_HEADER_KEY
+              value: isbackoffice
+            - name: USER_PROPERTIES_HEADER_KEY
+              value: miauserproperties
           securityContext:
             allowPrivilegeEscalation: false
             privileged: false

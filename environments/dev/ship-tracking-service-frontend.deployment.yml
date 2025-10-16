@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ship-tracking-service-frontend
+  annotations:
+    mia-platform.eu/version: 14.1.0-alpha.0
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+    fluentbit.io/parser: pino
+    domain: ship-tracking
+  labels:
+    app: ship-tracking-service-frontend
+    app.kubernetes.io/name: ship-tracking-service-frontend
+    app.kubernetes.io/version: latest
+    app.kubernetes.io/component: custom
+    app.kubernetes.io/part-of: trip-planner
+    app.kubernetes.io/managed-by: mia-platform
+    mia-platform.eu/stage: dev
+    mia-platform.eu/tenant: c1d106ff-4716-49a1-88e2-940b21705986
+    mia-platform.eu/log-type: mia-json
+    technologies: html
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ship-tracking-service-frontend
+  strategy:
+    type: RollingUpdate
+  revisionHistoryLimit: 1
+  template:
+    metadata:
+      annotations:
+        mia-platform.eu/version: 14.1.0-alpha.0
+        apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+        apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+        fluentbit.io/parser: pino
+        domain: ship-tracking
+      labels:
+        app: ship-tracking-service-frontend
+        app.kubernetes.io/name: ship-tracking-service-frontend
+        app.kubernetes.io/version: latest
+        app.kubernetes.io/component: custom
+        app.kubernetes.io/part-of: trip-planner
+        app.kubernetes.io/managed-by: mia-platform
+        mia-platform.eu/stage: dev
+        mia-platform.eu/tenant: c1d106ff-4716-49a1-88e2-940b21705986
+        mia-platform.eu/log-type: mia-json
+        technologies: html
+    spec:
+      imagePullSecrets:
+        - name: nexus-gcloud
+      terminationGracePeriodSeconds: 30
+      serviceAccountName: ship-tracking-service-frontend
+      containers:
+        - name: ship-tracking-service-frontend
+          image: harbor.local/mia-platform-test/ship-tracker-frontend:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+            requests:
+              memory: 50Mi
+              cpu: 50m
+          volumeMounts: []
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          args: []
+          env:
+            - name: LOG_LEVEL
+              value: '{{LOG_LEVEL}}'
+            - name: MICROSERVICE_GATEWAY_SERVICE_NAME
+              value: microservice-gateway
+            - name: TRUSTED_PROXIES
+              value: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+            - name: HTTP_PORT
+              value: '3000'
+            - name: USERID_HEADER_KEY
+              value: miauserid
+            - name: GROUPS_HEADER_KEY
+              value: miausergroups
+            - name: CLIENTTYPE_HEADER_KEY
+              value: client-type
+            - name: BACKOFFICE_HEADER_KEY
+              value: isbackoffice
+            - name: USER_PROPERTIES_HEADER_KEY
+              value: miauserproperties
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+      volumes: []
+      hostIPC: false
+      hostNetwork: false
+      hostPID: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault

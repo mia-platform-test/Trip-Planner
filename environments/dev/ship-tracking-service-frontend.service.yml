@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fleet-management
+  name: ship-tracking-service-frontend
   annotations:
     mia-platform.eu/version: 14.1.0-alpha.0
   labels:
-    app: fleet-management
-    app.kubernetes.io/name: fleet-management
+    app: ship-tracking-service-frontend
+    app.kubernetes.io/name: ship-tracking-service-frontend
     app.kubernetes.io/version: latest
     app.kubernetes.io/component: custom
     app.kubernetes.io/part-of: trip-planner
@@ -22,4 +22,4 @@ spec:
       targetPort: 80
       nodePort: null
   selector:
-    app: fleet-management
+    app: ship-tracking-service-frontend

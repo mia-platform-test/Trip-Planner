@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-application-demo
+  name: postgresql-database
   annotations:
     mia-platform.eu/version: 14.1.0-alpha.0
   labels:
-    app: frontend-application-demo
-    app.kubernetes.io/name: frontend-application-demo
+    app: postgresql-database
+    app.kubernetes.io/name: postgresql-database
     app.kubernetes.io/version: latest
     app.kubernetes.io/component: custom
     app.kubernetes.io/part-of: trip-planner
@@ -19,7 +19,7 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: 3000
       nodePort: null
   selector:
-    app: frontend-application-demo
+    app: postgresql-database
